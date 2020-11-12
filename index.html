@@ -8,72 +8,29 @@
     <meta name="keywords" content="" />
     <meta name="viewport" content="" />
     <style>
-	html
-	{
-		position: relative;
-		min-height: 100%;
-		-ms-touch-action: manipulation;
-		touch-action: manipulation;
-	}
+        html
+        {
+            position: relative;
+            min-height: 100%;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+        }
 
-	body
-	{
-		margin: 0 auto 70px auto;
-		padding: 0;
-		color: #444;
-		background-color: #fff;
-		font: 11.4285714286px "trebuchet ms", palatino, tahoma, sans-serif;
-	}
-	/* The Modal (background) */
-	.modal
-	{
-		display: none; /* Hidden by default */
-		position: fixed; /* Stay in place */
-		z-index: 1; /* Sit on top */
-		left: 0;
-		top: 0;
-		width: 100%; /* Full width */
-		height: 100%; /* Full height */
-		overflow: auto; /* Enable scroll if needed */
-		background-color: rgb(0,0,0); /* Fallback color */
-		background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-	}
+        body
+        {
+            margin: 0 auto 70px auto;
+            padding: 0;
+            color: #444;
+            background-color: #fff;
+            font: 11.4285714286px "trebuchet ms", palatino, tahoma, sans-serif;
+        }
+    </style>
 
-	/* Modal Content/Box */
-	.modal-content
-	{
-		background-color: #fefefe;
-		margin: 5% auto; /* 15% from the top and centered */
-		padding: 20px;
-		border: 1px solid #888;
-		width: 90%; /* Could be more or less, depending on screen size */
-		/*height: 80%;*/
-	}
-
-	/* The Close Button */
-	.close
-	{
-		color: #aaa;
-		float: right;
-		font-size: 28px;
-		font-weight: bold;
-	}
-
-	.close:hover,
-	.close:focus
-	{
-		color: black;
-		text-decoration: none;
-		cursor: pointer;
-	}
-
-</style>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
 <body>
-<div id="ConnectWithGoolePhotos">
+    <div id="ConnectWithGoolePhotos">
         Cloud File(s):
         <div>
             <input id="btnGetGoolePhotos" type='button' value="Select from Google Photos" onclick="" style="display:none;" />
@@ -83,52 +40,20 @@
                 <label id="ConnectWithGoolePhotosError"></label>
             </div>
         </div>
-</div>
-
-<!-- The Modal -->
-<div id="googlePhotosModal" class="modal">
-
-    <!-- Modal content -->
-    <div class="modal-content">
-        <span id="modalClose" class="close">&times;</span>
-        <div>
-            <p>Here is the header!</p>
-        </div>
-        <div id="googlePhotosModalContent" class="row"> @{/*style = "position:absolute;height:80%;width:100%;overflow-y:scroll;" >*/} 
-            Please standby, loading from Google Photos...
-        </div>
     </div>
 
-</div>
+    <script async defer src="https://apis.google.com/js/api.js"
+            onload="this.onload=function(){};handleClientLoad()"
+            onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
 
-<script async defer src="https://apis.google.com/js/api.js"
-		onload="this.onload=function(){};handleClientLoad()"
-		onreadystatechange="if (this.readyState === 'complete') this.onload()">
-</script>
-
-<script>
-
-	var googlePhotosModal = document.getElementById("googlePhotosModal");
-	var googlePhotosModalClose = document.getElementById("modalClose");
-	// When the user clicks on <span> (x), close the modal
-	googlePhotosModalClose.onclick = function ()
-	{
-		googlePhotosModal.style.display = "none";
-	}
-
-	// When the user clicks anywhere outside of the modal, close it
-	window.onclick = function (event)
-	{
-		if (event.target == googlePhotosModal)
-		{
-			googlePhotosModal.style.display = "none";
-		}
-	}
+    <script>
 
 	var GoogleAuth;
 	var SCOPE = 'https://www.googleapis.com/auth/photoslibrary.readonly';
 	var lastPageToken = "";
 	var doneLoading = false;
+    var keepLoading = true;
 
 	function handleClientLoad()
 	{
@@ -149,7 +74,7 @@
 		// 'scope' field specifies space-delimited list of access scopes.
 		gapi.client.init({
 			//'discoveryDocs': [discoveryUrl],
-			'clientId': '800930803004-blhvr2c0u8rpikjpeav7famjm77s32l6.apps.googleusercontent.com',
+            'clientId': '800930803004-blhvr2c0u8rpikjpeav7famjm77s32l6.apps.googleusercontent.com',
 			'scope': SCOPE
 		}).then(
 		// success
@@ -176,23 +101,24 @@
 				revokeAccess();
 			});
 			$('#btnGetGoolePhotos').click(function ()
-			{
-				googlePhotosModal.style.display = "block";
-				GetGooglePhotos(lastPageToken);
+            {
+                SendDataToTop("Open Modal", "null");
+				//googlePhotosModal.style.display = "block";
+				//GetGooglePhotos(lastPageToken);
 			});
-			
+
 			SendDataToTop("gapi.client.init success", "null")
 		},
 		// failure
 		function (error)
 		{
 			document.getElementById('ConnectWithGoolePhotosError').innerHTML = "gapi.client.init: " + error.details;
-			setTimeout(function ()
+			/*setTimeout(function ()
 			{
 				document.getElementById('ConnectWithGoolePhotosError').style.display = 'none';
 				document.getElementById('ConnectWithGoolePhotos').style.display = 'none';
 
-			}, 5000);
+			}, 5000);*/
 			SendDataToTop("gapi.client.init failure", "null")
 		});
 	}
@@ -261,8 +187,8 @@
 					'params': parameters
 				}).then(function (response)
 				{
-					var items = JSON.parse(response.body);
-					PostPhotosToModal(items.mediaItems);
+                    var items = JSON.parse(response.body);
+                    SendDataToTop("GooglePhotos mediaItems", items.mediaItems)
 
 					if (items.nextPageToken != null && items.nextPageToken != "")
 					{
@@ -274,7 +200,7 @@
 					}
 
 					if (items.nextPageToken != null && items.nextPageToken != "" &&
-						googlePhotosModal.style.display != "none")
+                        keepLoading)
 					{
 						GetGooglePhotos(items.nextPageToken);
 					}
@@ -291,41 +217,50 @@
 		}
 	}
 
-	function PostPhotosToModal(mediaItems)
-	{
-		if (googlePhotosModal.style.display != "none")
-		{
-			if (lastPageToken == '')
-			{
-				// first time
-				$("#googlePhotosModalContent").html('');
-			}
-
-			var newHtml = "";
-
-			for (var i = 0; i < mediaItems.length; i++)
-			{
-				newHtml += '<div class="col"><img src="' + mediaItems[i].baseUrl + '" style="max-width: 200px; max-height: 200px;" /></div>';
-			}
-
-			$("#googlePhotosModalContent").append(newHtml);
-		}
-	}
-	
+    var allowedParents =
+        [
+            "http://localhost:61313",
+            "http://rpframe"
+        ];
 	function SendDataToTop(message, data)
 	{
-		var messageObject = 
+		var messageObject =
 		{
-			'message' = message,
-			'data' = data
+			'message': message,
+			'data': data
 		};
         var messageToSend = JSON.stringify(messageObject);
-		
-		window.top.postMessage(messageToSend, "http://localhost:61313/");
-		window.top.postMessage(messageToSend, "http://rpframe");
+
+        for (var i = 0; i < allowedParents.length; i++)
+        {
+            window.top.postMessage(messageToSend, allowedParents[i]);
+        }
 	}
 
-</script>
+    window.onmessage = function (e)
+    {
+        if (allowedParents.includes(e.origin))
+        {
+            if (!e.data.startsWith("!"))
+            {
+                var message = e.data;
+                if (message != null)
+                {
+                    if (message == "GetGooglePhotos")
+                    {
+                        keepLoading = true;
+                        GetGooglePhotos(lastPageToken);
+                    }
+                    else if (message = "StopGettingGooglePhotos")
+                    {
+                        keepLoading = false;
+                    }
+                }
+            }
+        }
+    };
+
+    </script>
 
 </body>
 </html>
