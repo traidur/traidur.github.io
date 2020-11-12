@@ -74,7 +74,7 @@
 </head>
 <body>
 <div id="ConnectWithGoolePhotos">
-        butt File(s):
+        Cloud File(s):
         <div>
             <input id="btnGetGoolePhotos" type='button' value="Select from Google Photos" onclick="" style="display:none;" />
             <input id="btnConnectWithGoolePhotos" type='button' value="Connect to Google Photos" onclick="" style="display:none;" />
@@ -180,6 +180,8 @@
 				googlePhotosModal.style.display = "block";
 				GetGooglePhotos(lastPageToken);
 			});
+			
+			SendDataToTop("gapi.client.init success", "null")
 		},
 		// failure
 		function (error)
@@ -191,6 +193,7 @@
 				document.getElementById('ConnectWithGoolePhotos').style.display = 'none';
 
 			}, 5000);
+			SendDataToTop("gapi.client.init failure", "null")
 		});
 	}
 
@@ -307,6 +310,19 @@
 
 			$("#googlePhotosModalContent").append(newHtml);
 		}
+	}
+	
+	function SendDataToTop(message, data)
+	{
+		var messageObject = 
+		{
+			'message' = message,
+			'data' = data
+		};
+        var messageToSend = JSON.stringify(messageObject);
+		
+		window.top.postMessage(messageToSend, "http://localhost:61313/");
+		window.top.postMessage(messageToSend, "http://rpframe");
 	}
 
 </script>
